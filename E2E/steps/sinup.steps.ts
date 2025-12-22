@@ -1,132 +1,75 @@
-import { Given, Then, When } from "@cucumber/cucumber";
+import { Given, When, Then } from '../pageFixture/page.fIxture'; // Use the fixture file imports
+import { expect } from '@playwright/test';
 
-import HomePage from "../pom/homePage";
-import SignupPage from "../pom/sinupPage";
-let homepage:HomePage;
-let signuppage:SignupPage;
+// Background
+Given('I am on the Mikloset signup page', async ({ homePage }) => {
+   await homePage.goto("/signup");
+});
 
+When('I click on Sign up with email', async ({ signupPage }) => {
+   await signupPage.openSignUpForm();
+});
 
- 
-         Given('I am on the Mikloset signup page', async function () {
-            homepage = new HomePage(this.page!);
-            signuppage = new SignupPage(this.page!);
-            await homepage.goto("/signup");
-          
-         });
-       
-         When('I click on Sign up with email', async function () {
-              await signuppage.openSignUpForm();        
-         });
-       
-   
-       
-         When('I enter full name {string}', async function (fullName) {
-            await signuppage.enterFullName(fullName);
-            
-           
-         });
-       
-   
-       
-         When('I enter email address {string}', async function (email) {
-            await signuppage.enterMail(email);
-           
-         });
-       
-   
-       
-         When('I enter username {string}', async function (username) {
-            await signuppage.enterUserName(username);
+// Input Steps
+When('I enter full name {string}', async ({ signupPage }, fullName) => {
+   await signupPage.enterFullName(fullName);
+});
 
-           
-         });
-       
-   
-       
-         When('I enter password {string}', async function (password) {
-           await signuppage.enterPassword(password);
-         });
-       
-   
-       
-         When('I select gender {string}', async function (gender) {
-           await signuppage.enterGender(gender)
-         });
-       
-   
-       
-         When('I click on Sign up button', async function () {
-            await signuppage.pressSignupButton();
-           
-         });
-       
-   
-       
-         Then('I should see a success message Signup successful or error {string}', async function (err) {
-            await signuppage.validateErrOrWelcomeMsg(err);
-           
-         });
-       
-   
-       
-      
-       
+When('I enter email address {string}', async ({ signupPage }, email) => {
+   await signupPage.enterMail(email);
+});
 
-         //verify the signuppage
+When('I enter username {string}', async ({ signupPage }, username) => {
+   await signupPage.enterUserName(username);
+});
 
-       
-         Then('I should see {string} option', async function (buttons) {
-            await signuppage.verifyButtons(buttons)
-           
-         });     
+When('I enter password {string}', async ({ signupPage }, password) => {
+   await signupPage.enterPassword(password);
+});
 
-       
-         Then('I should see fields for {string}, {string}, {string} and {string}', async function (name, mail, userName, password) {
-            await signuppage.verifyFields();
-             console.log('verifed:',name,mail,userName,password)
-         });
-       
+When('I select gender {string}', async ({ signupPage }, gender) => {
+   await signupPage.enterGender(gender);
+});
 
-       
-         Then('I should see gender options {string}, {string}, and {string}', async function (Female,male,genderNeutral) {
-            await signuppage.verifyGenders();
-            console.log('verified:',Female,male,genderNeutral);
-         });
+When('I click on Sign up button', async ({ signupPage }) => {
+   await signupPage.pressSignupButton();
+});
 
-       
-         Then('I should see a Sign up button', async function () {
-           await signuppage.verifySignupButton();
-         });
-       
+// Verification Steps
+Then('I should see a success message Signup successful or error {string}', async ({ signupPage }, err) => {
+   await signupPage.validateErrOrWelcomeMsg(err);
+});
 
-         // signup attempt all fields blanks
-   
-       
-         When('I leave all fields blank', async function () {
-            await signuppage.verifySignupButton();
-          
-         });
-       
-       
-         Then('the Sign up button should be disabled', async function () {
-            await signuppage.VerifySignupButtonDisable();
-          
-         });
-       
+Then('I should see {string} option', async ({ signupPage }, buttons) => {
+   await signupPage.verifyButtons(buttons);
+});
 
-       
-         Then('I should see validation messages for required fields', async function () {
-          await signuppage.verifyValidationMsg();
-         });
-       ;
+Then('I should see fields for {string}, {string}, {string} and {string}', async ({ signupPage }, name, mail, userName, password) => {
+   await signupPage.verifyFields();
+});
 
-         // Signup attempt with weak password
+Then('I should see gender options {string}, {string}, and {string}', async ({ signupPage }, female, male, genderNeutral) => {
+   await signupPage.verifyGenders();
+});
 
-          Then('I should see an error message {string}', async function (error) {
+Then('I should see a Sign up button', async ({ signupPage }) => {
+   await signupPage.verifySignupButton();
+});
 
-               await signuppage.verifyValidationMsg(error);
-         });
+// Negative Scenarios
+When('I leave all fields blank', async ({ signupPage }) => {
+   // Just verify button is visible, doing nothing allows the next step (clicking signup) to trigger errors
+   await signupPage.verifySignupButton();
+});
 
-         
+Then('the Sign up button should be disabled', async ({ signupPage }) => {
+   await signupPage.VerifySignupButtonDisable();
+});
 
-         
+Then('I should see validation messages for required fields', async ({ signupPage }) => {
+   await signupPage.verifyValidationMsg(); // Calls the bulk verify method
+});
+
+Then('I should see an error message {string}', async ({ signupPage }, error) => {
+   await signupPage.verifyValidationMsg(error);
+});

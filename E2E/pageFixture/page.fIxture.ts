@@ -1,35 +1,31 @@
 import { test as base, createBdd } from 'playwright-bdd';
-import { Page, BrowserContext, expect } from '@playwright/test';
-import HomePage from '../pom/homePage';
-import { LoginPage } from '../pom/loginPage';
-import dashboardPage from '../pom/dashboardPage';
 import SignupPage from '../pom/sinupPage';
-import { FollowMePage } from '../pom/followMePage';
+import HomePage from '../pom/homePage'; // Ensure this file exists
+import { LoginPage } from '../pom/loginPage';
+import DashboardPage from '../pom/dashboardPage';
+// import fs from 'fs';
+// import path from 'path';
+// import { fileURLToPath } from 'url'; // 1. Add this import
 
-// 1. Define the type for your custom fixtures (Page Objects + State)
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// const authFile = path.join(__dirname, '..', 'auth.json');
+
 type Fixtures = {
-  context: BrowserContext;
-  page: Page;
-  mailinatorPage: Page;
-  
-  // Page Objects (The "Factory" part)
+  signupPage: SignupPage;
   homePage: HomePage;
   loginPage: LoginPage;
-  dashboard: dashboardPage;
-  signupPage: SignupPage;
-  followMePage: FollowMePage;
-
-  // Shared State
-  testState: {
-    newTab?: Page;
-    senderName?: string;
-  };
+  dashboardPage: DashboardPage;
 };
 
-// 2. Extend the base test to create the "Factory"
 export const test = base.extend<Fixtures>({
-  context: async ({ browser }, use) => {
-    const context = await browser.newContext();
+  context: async ({ browser }, use, testInfo) => {
+    const useAuth = testInfo.tags.includes('@loggedIn');
+    const storageState = useAuth && fs.existsSync(authFile) ? authFile : undefined;
+
+   const context = await browser.newContext({
+  storageState: 'auth.json',
+});
     await use(context);
     await context.close();
   },
@@ -40,18 +36,10 @@ export const test = base.extend<Fixtures>({
     await page.close();
   },
 
-  mailinatorPage: async ({ context }, use) => {
-    const page = await context.newPage();
-    await use(page);
-    await page.close();
+  signupPage: async ({ page }, use) => {
+    await use(new SignupPage(page));
   },
 
-  testState: async ({}, use) => {
-    await use({});
-  },
-
-  // --- Initialize Page Objects ---
-  
   homePage: async ({ page }, use) => {
     await use(new HomePage(page));
   },
@@ -60,19 +48,10 @@ export const test = base.extend<Fixtures>({
     await use(new LoginPage(page));
   },
 
-  dashboard: async ({ page }, use) => {
-    await use(new dashboardPage(page));
-  },
-
-  signupPage: async ({ page }, use) => {
-    await use(new SignupPage(page));
-  },
-
-  followMePage: async ({ page }, use) => {
-    await use(new FollowMePage(page));
+  dashboardPage: async ({ page }, use) => {
+    await use(new DashboardPage(page));
   },
 });
 
-// 3. Export BDD keywords
 export const { Given, When, Then } = createBdd(test);
 export { expect } from '@playwright/test';

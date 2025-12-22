@@ -47,6 +47,6 @@ export default class WaitUtils {
   }
 
   async waitForURLContains(partial: string, timeout = 5000) {
-    await this.page.waitForURL(`/${partial}`, { timeout });
+    await this.page.waitForURL(`**${partial}`, { timeout });
   }
 }

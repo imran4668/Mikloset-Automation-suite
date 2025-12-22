@@ -1,10 +1,13 @@
 import { expect, Locator, Page } from '@playwright/test';
+import WaitUtils from '../utils/support'; // Import your support class
 
 export default class SignupPage {
   readonly page: Page;
+  readonly waitUtils: WaitUtils; // Declare waitUtils
+
   readonly sinupWithMailButton: Locator;
   readonly googleButton: Locator;
-  //signup from
+  //signup form
   readonly fullName: Locator;
   readonly email: Locator;
   readonly userName: Locator;
@@ -23,13 +26,10 @@ export default class SignupPage {
   readonly passwordError: Locator;
   readonly genderError: Locator;
 
-
-
-
-
-
   constructor(page: Page) {
     this.page = page;
+    this.waitUtils = new WaitUtils(page); // Initialize WaitUtils
+
     this.sinupWithMailButton = page.getByTestId("sign_up_with_email_button");
     this.googleButton = page.getByTestId('google_button');
     //signup form
@@ -50,165 +50,151 @@ export default class SignupPage {
     this.userNameError = page.getByTestId("userName_field_error_text");
     this.passwordError = page.getByTestId("password_field_error_text");
     this.genderError = page.getByTestId("gender_field_error_text");
-
-
-
-
-
-
-
   }
 
   async openSignUpForm() {
-    await this.sinupWithMailButton.click();
+    await this.waitUtils.click(this.sinupWithMailButton);
   }
+
   async enterFullName(fullName: string) {
     await this.fullName.fill(fullName);
   }
+
   async enterMail(mail: string) {
     await this.email.fill(mail);
   }
+
   async enterUserName(userName: string) {
     await this.userName.fill(userName);
   }
+
   async enterPassword(password: string) {
     await this.password.fill(password);
   }
+
   async enterGender(gender: string) {
-    gender === "male" ? await this.genderMale.click() :
-      gender === "female" ? await this.genderFemale.click() :
-        await this.genderNeutral.click();
+    if (gender === "male") {
+      await this.waitUtils.click(this.genderMale);
+    } else if (gender === "female") {
+      await this.waitUtils.click(this.genderFemale);
+    } else {
+      await this.waitUtils.click(this.genderNeutral);
+    }
   }
+
   async pressSignupButton() {
-    await this.singnUpButton.click();
+    await this.waitUtils.click(this.singnUpButton);
   }
-  async validateErrOrWelcomeMsg(err?:string){
-    err==="User already exits with provided email"? await this.verifyValidationMsg(err):
-    await this.verifyWelcomMsgToast();
+
+  async validateErrOrWelcomeMsg(err?: string) {
+    err === "User already exits with provided email"
+      ? await this.verifyValidationMsg(err)
+      : await this.verifyWelcomMsgToast();
   }
+
   async verifyWelcomMsgToast() {
+    // waitUtils.waitForText uses 'toHaveText' (exact match). 
+    // Since we need 'toContainText', we stick to expect here for safety, 
+    // but use waitUtils for visibility first.
+    await this.waitUtils.waitForVisible(this.welcomeMsgToast);
     await expect(this.welcomeMsgToast).toContainText("Welcome");
+
+    await this.waitUtils.waitForVisible(this.succesMsgToast);
     await expect(this.succesMsgToast).toContainText("User Signup successful");
   }
+
   async verifyDashbard() {
-    await expect(this.page).toHaveURL(/dashboard/);
+    await this.waitUtils.waitForURLContains('dashboard');
   }
+
   async verifyButtons(button: string) {
-    button === "Continue with Google" ? await expect(this.googleButton).toBeVisible() :
-      await expect(this.sinupWithMailButton).toBeVisible();
-  }
-  async verifyFields() {
-    await expect(this.fullName).toBeVisible();
-    await expect(this.email).toBeVisible();
-    await expect(this.userName).toBeVisible();
-    await expect(this.password).toBeVisible();
-  }
-  async verifyGenders() {
-    await expect(this.genderFemale).toBeVisible();
-    await expect(this.genderMale).toBeVisible();
-    await expect(this.genderNeutral).toBeVisible();
-  }
-  async verifySignupButton() {
-    await expect(this.singnUpButton).toBeVisible();
-  }
-  async VerifySignupButtonDisable() {
-    await expect(this.singnUpButton).toBeDisabled();
-  }/**
- * This is the "controller" function.
- * It's now much cleaner and easier to add new error messages.
- */
-async verifyValidationMsg(error?: string) {
-  if (typeof error === 'string') {
-    // A switch statement is much cleaner and fixes the bug 
-    // you had with the '||' (OR) condition.
-    switch (error) {
-      case "Please enter valid email":
-      case "User already exits with provided email":
-        await this.verifyEmailError(error);
-        break;
-
-      case "Password must be minimum 6 characters, including at least letter, 1 numeric and 1 special character":
-        await this.verifyPasswordError(error);
-        break;
-
-      case "minimum 2 characters":
-        // Note: Your original code sent this to verifyUserNameError.
-        // If it's for Full Name, change it to:
-        // await this.verifyFullNameError(error);
-        await this.verifyUserNameError(error);
-        break;
-
-      case "Username already exists":
-      case "Sorry, only letters (a-z), numbers (0-9), and periods (.) are allowed.":
-        await this.verifyUserNameError(error);
-        break;
-
-      case "Please select":
-        await this.verifyGenderError(error);
-        break;
-
-      default:
-        // This helps you find errors you haven't handled yet
-        throw new Error(`WARNING: Unhandled error message in verifyValidationMsg: ${error}`);
+    if (button === "Continue with Google") {
+      await this.waitUtils.waitForVisible(this.googleButton);
+    } else {
+      await this.waitUtils.waitForVisible(this.sinupWithMailButton);
     }
-  } else {
-    // This part is for checking all fields when no specific error is given
-    // We can run these in parallel to make it faster
-    await Promise.all([
-      this.verifyUserNameError(),
-      this.verifyEmailError(),
-      this.verifyGenderError(),
-      this.verifyFullNameError(),
-      this.verifyPasswordError()
-    ]);
   }
-}
 
-/**
- * Robust, simplified error verifiers.
- * They have NO flaky waits. They rely on Playwright's auto-waiting.
- */
-async verifyUserNameError(error?: string) {
-  if (typeof error === "string") {
-    // Playwright will auto-wait for the element to appear and have this text
-    await expect(this.userNameError).toContainText(error);
-  } else {
-    // Playwright will auto-wait for the element to appear
-    await expect(this.userNameError).toBeVisible();
+  async verifyFields() {
+    await this.waitUtils.waitForVisible(this.fullName);
+    await this.waitUtils.waitForVisible(this.email);
+    await this.waitUtils.waitForVisible(this.userName);
+    await this.waitUtils.waitForVisible(this.password);
   }
-}
 
-async verifyFullNameError(error?: string) {
-  if (typeof error === "string") {
-    await expect(this.fullNameError).toContainText(error);
-  } else {
-    await expect(this.fullNameError).toBeVisible();
+  async verifyGenders() {
+    await this.waitUtils.waitForVisible(this.genderFemale);
+    await this.waitUtils.waitForVisible(this.genderMale);
+    await this.waitUtils.waitForVisible(this.genderNeutral);
   }
-}
 
-async verifyEmailError(error?: string) {
-  if (typeof error === "string") {
-    await expect(this.emailError).toContainText(error);
-  } else {
-    await expect(this.emailError).toBeVisible();
+  async verifySignupButton() {
+    await this.waitUtils.waitForVisible(this.singnUpButton);
   }
-}
 
-async verifyGenderError(error?: string) {
-  if (typeof error === "string") {
-    // I noticed you had a different check here. 
-    // 'toContainText' is usually safer.
-    await expect(this.genderError).toContainText(error);
-  } else {
-    await expect(this.genderError).toBeVisible();
+  async VerifySignupButtonDisable() {
+    await this.waitUtils.waitForVisible(this.singnUpButton);
+    await expect(this.singnUpButton).toBeDisabled();
   }
-}
 
-async verifyPasswordError(error?: string) {
-  if (typeof error === "string") {
-    await expect(this.passwordError).toContainText(error);
-  } else {
-    await expect(this.passwordError).toBeVisible();
+  // --- Validation Logic ---
+
+  async verifyValidationMsg(error?: string) {
+    if (typeof error === 'string') {
+      switch (error) {
+        case "Please enter valid email":
+        case "User already exits with provided email":
+          await this.verifyEmailError(error);
+          break;
+        case "Password must be minimum 6 characters, including at least letter, 1 numeric and 1 special character":
+          await this.verifyPasswordError(error);
+          break;
+        case "minimum 2 characters":
+          await this.verifyUserNameError(error);
+          break;
+        case "Username already exists":
+        case "Sorry, only letters (a-z), numbers (0-9), and periods (.) are allowed.":
+          await this.verifyUserNameError(error);
+          break;
+        case "Please select":
+          await this.verifyGenderError(error);
+          break;
+        default:
+          throw new Error(`WARNING: Unhandled error message: ${error}`);
+      }
+    } else {
+      await Promise.all([
+        this.verifyUserNameError(),
+        this.verifyEmailError(),
+        this.verifyGenderError(),
+        this.verifyFullNameError(),
+        this.verifyPasswordError()
+      ]);
+    }
   }
-}
+
+  async verifyUserNameError(error?: string) {
+    await this.waitUtils.waitForVisible(this.userNameError);
+    if (error) await expect(this.userNameError).toContainText(error);
+  }
+
+  async verifyFullNameError(error?: string) {
+    await this.waitUtils.waitForVisible(this.fullNameError);
+    if (error) await expect(this.fullNameError).toContainText(error);
+  }
+
+  async verifyEmailError(error?: string) {
+    await this.waitUtils.waitForVisible(this.emailError);
+    if (error) await expect(this.emailError).toContainText(error);
+  }
+
+  async verifyGenderError(error?: string) {
+    await this.waitUtils.waitForVisible(this.genderError);
+    if (error) await expect(this.genderError).toContainText(error);
+  }
+
+  async verifyPasswordError(error?: string) {
+    await this.waitUtils.waitForVisible(this.passwordError);
+    if (error) await expect(this.passwordError).toContainText(error);
+  }
 }

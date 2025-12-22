@@ -1,83 +1,51 @@
-import { Given, Then, When } from "@cucumber/cucumber";
-import HomePage from "../pom/homePage";
-import { LoginPage } from "../pom/loginPage";
-// import { ICustomWorld } from "../support/world";
+import { Given, When, Then } from '../pageFixture/page.fIxture';
 
-
-let homepage: HomePage;
-let loginpage: LoginPage;
-
-Given('I am on the Mikloset login page', async function () {
-    homepage = new HomePage(this.page!);
-    loginpage = new LoginPage(this.page!);
-    await homepage.goto("/signin");
-
+Given('I am on the Mikloset login page', async ({ homePage }) => {
+    await homePage.goto("/signin");
 });
 
-When('I enter username {string} and password {string}', async function (username, password) {
-    await loginpage.login(username, password);
+// Covers: When I enter username "..." and password "..."
+// Covers: When I try using "..." and "..."
+// Covers: When I attempt login using "..." and "..."
+// Note: In BDD, you can use regex or multiple definitions, 
+// but simply mapping the exact strings from your feature is safest.
+
+When('I enter username {string} and password {string}', async ({ loginPage }, username, password) => {
+    await loginPage.login(username, password);
 });
 
-
-Then('I should see {string} and if you see welcome storecookies', async function (expectedOutcome) {
-
-    await loginpage.validateLoginSuccess();
-
+When('I try using {string} and {string}', async ({ loginPage }, username, password) => {
+    await loginPage.login(username, password);
 });
 
-//negative
-Then('I should see the error message {string}', async function (error) {
-    if (error === "Password is not Valid") {
-        await loginpage.validatePasswordErrors(error);
-    }
-    else if (error === "no account created") {
-        await loginpage.validateUserNameErrors(error);
-    }
-    else if (error === "Please enter a Email or UserName") {
-        await loginpage.validateUserNameErrors(error);
-    }
-    else if (error === "Please enter a Password") {
-        await loginpage.validatePasswordErrors(error);
-    }
-    else if (error === "invalid input") {
-        await loginpage.validateUserNameErrors(error);
-    }
-
+When('I attempt login using {string} and {string}', async ({ loginPage }, username, password) => {
+    await loginPage.login(username, password);
 });
 
-
-
-When('I try using {string} and {string}', async function (username, password) {
-    await loginpage.login(username, password);
-
+// Success Step
+Then('I should see {string} and if you see welcome storecookies', async ({ loginPage }, expectedOutcome) => {
+    // The storing of cookies is commented out in your POM, so we just validate success here
+    await loginPage.validateLoginSuccess();
 });
 
-Then('the login button should be disabled', async function () {
-    await loginpage.validateLoginButton();
+// Consolidated Error Steps
+Then('I should see the error message {string}', async ({ loginPage }, error) => {
+    await loginPage.verifyErrorMsg(error);
 });
 
-When('I attempt login using {string} and {string}', async function (username, password) {
-    await loginpage.login(username, password);
-
-});
-
-
-
-Then('I should see {string}', async function (message) {
+Then('I should see {string}', async ({ loginPage }, message) => {
     if (message === "Welcome") {
-        await loginpage.validateLoginSuccess();
+        await loginPage.validateLoginSuccess();
+    } else {
+        await loginPage.verifyErrorMsg(message);
     }
-    else if (message === 'Please enter a Email or UserName' || message === 'No account created' ) {
-
-        await loginpage.validateUserNameErrors(message);
-    }
-    else {
-
-        await loginpage.validatePasswordErrors(message);
-    }
-
 });
 
-When('press login button', async function () {
-    await loginpage.pressLoginButton();
+// UI State Steps
+Then('the login button should be disabled', async ({ loginPage }) => {
+    await loginPage.validateLoginButton();
+});
+
+When('press login button', async ({ loginPage }) => {
+    await loginPage.pressLoginButton();
 });

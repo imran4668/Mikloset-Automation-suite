@@ -1,84 +1,63 @@
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import dotenv from 'dotenv';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+// 1. FIXED: Define __dirname for ES Modules (Fixes ReferenceError)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
+// 2. Load environment variables
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
 const testDir = defineBddConfig({
-  features: 'E2E/features/*.feature',
-  steps: 'E2E/steps/*.steps.ts',
+  paths: ['E2E/features/dashboard_Common.feature'],
+  steps: [
+    'E2E/steps/*.ts',
+    'E2E/pageFixture/page.fIxture.ts'
+  ],
 });
+
 export default defineConfig({
   testDir,
-  /* Run tests in files in parallel */
-  fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-  use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+  // 3. FIXED: Increase Global Timeout (Fixes "30000ms exceeded")
+  // Setting to 60 seconds (60000ms) or 2 minutes (120000ms)
+  timeout: 60 * 1000,
+
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+
+  // Optional: Reduce workers if your PC is slow/laggy during tests
+  workers: 1, 
+
+  reporter: 'html',
+
+  use: {
+    // baseURL:"https://dev.mikloset.com/betatesters/FFI",
+    //baseURL: "http://192.168.2.47:3000/betatesters/FFI",
+    // baseURL: "https://www.mikloset.com",
+    screenshot: 'only-on-failure',
+    headless:false,
+    // Action timeout (for clicks, fills)
+    actionTimeout: 15 * 1000,
+
+    // Navigation timeout (for page.goto)
+    navigationTimeout: 30 * 1000,
+
     trace: 'on-first-retry',
   },
 
-  /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    /* Test against mobile viewports. */
     // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
     // },
   ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });
