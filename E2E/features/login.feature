@@ -49,7 +49,7 @@ Feature: User Login Functionality
   @Negative
   Scenario: Script injection attempt
     When I enter username "<script>alert(1)</script>" and password "test"
-    Then I should see the error message "No Account created"
+    Then I should see the error message "No account created"
 
 
   # Edge Case Scenarios

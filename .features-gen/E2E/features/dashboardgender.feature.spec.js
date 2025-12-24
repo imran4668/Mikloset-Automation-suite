@@ -1,0 +1,56 @@
+// Generated from: E2E/features/dashboardgender.feature
+import { test } from "../../../E2E/pageFixture/page.fIxture.ts";
+
+test.describe('Home Page - Gender Based UI and Category Verification', () => {
+
+  test.beforeEach('Background', async ({ Given, homePage }, testInfo) => { if (testInfo.error) return;
+    await Given('the user navigates to the Mikloset login page', null, { homePage }); 
+  });
+  
+  test('Verify Home page for Male user', { tag: ['@male', '@error1'] }, async ({ Given, Then, And, dashboardPage, loginPage }) => { 
+    await Given('the user logs in with credentials for a "male" account user "imrans" and pass "Mikloset@123"', null, { loginPage }); 
+    await Then('the background image should match the "male" background', null, { dashboardPage }); 
+    await And('the user should see the following categories and navigate correctly:', {"dataTable":{"rows":[{"cells":[{"value":"Accessories"}]},{"cells":[{"value":"Activewear"}]},{"cells":[{"value":"Beachwear"}]},{"cells":[{"value":"Beauty"}]},{"cells":[{"value":"Jeans"}]},{"cells":[{"value":"Miscellaneous"}]},{"cells":[{"value":"Outerwear"}]},{"cells":[{"value":"Pants"}]},{"cells":[{"value":"Shirts"}]},{"cells":[{"value":"Shoes"}]},{"cells":[{"value":"Shorts"}]},{"cells":[{"value":"Suits"}]}]}}, { dashboardPage }); 
+    await And('check view all link for categories', null, { dashboardPage }); 
+  });
+
+  test('Verify Home page for Female user', { tag: ['@female'] }, async ({ Given, Then, And, dashboardPage, loginPage }) => { 
+    await Given('the user logs in with credentials for a "female" account user "tester500" and pass "Tester500!"', null, { loginPage }); 
+    await Then('the background image should match the "female" background', null, { dashboardPage }); 
+    await And('the user should see the following categories and navigate correctly:', {"dataTable":{"rows":[{"cells":[{"value":"Accessories"}]},{"cells":[{"value":"Activewear"}]},{"cells":[{"value":"Beachwear"}]},{"cells":[{"value":"Beauty"}]},{"cells":[{"value":"Dresses"}]},{"cells":[{"value":"Handbags"}]},{"cells":[{"value":"Jeans"}]},{"cells":[{"value":"Jumpsuit"}]},{"cells":[{"value":"Loungewear"}]},{"cells":[{"value":"Miscellaneous"}]},{"cells":[{"value":"Outerwear"}]},{"cells":[{"value":"Pants"}]},{"cells":[{"value":"Shoes"}]},{"cells":[{"value":"Shorts"}]},{"cells":[{"value":"Skirts"}]},{"cells":[{"value":"Tops"}]}]}}, { dashboardPage }); 
+    await And('check view all link for categories', null, { dashboardPage }); 
+  });
+
+  test('Verify Home page for Gender Neutral user', { tag: ['@genderNeutral'] }, async ({ Given, Then, And, dashboardPage, loginPage }) => { 
+    await Given('the user logs in with credentials for a "gender neutral" account user "neu_qa" and pass "Mikloset@123"', null, { loginPage }); 
+    await Then('the background image should match the "neutral" background', null, { dashboardPage }); 
+    await And('the user should see the following categories and navigate correctly:', {"dataTable":{"rows":[{"cells":[{"value":"Accessories"}]},{"cells":[{"value":"Activewear"}]},{"cells":[{"value":"Beachwear"}]},{"cells":[{"value":"Beauty"}]},{"cells":[{"value":"Dresses"}]},{"cells":[{"value":"Handbags"}]},{"cells":[{"value":"Jeans"}]},{"cells":[{"value":"Loungewear"}]},{"cells":[{"value":"Miscellaneous"}]},{"cells":[{"value":"Outerwear"}]},{"cells":[{"value":"Pants"}]},{"cells":[{"value":"Shirts"}]},{"cells":[{"value":"Shoes"}]},{"cells":[{"value":"Shorts"}]},{"cells":[{"value":"Skirts"}]},{"cells":[{"value":"Tops"}]}]}}, { dashboardPage }); 
+    await And('check view all link for categories', null, { dashboardPage }); 
+  });
+
+  test.describe('Verify Edit option for all categories across user types and devices', () => {
+
+    test('Example #1', { tag: ['@editOption'] }, async ({ Given, Then, And, dashboardPage, loginPage }) => { 
+      await Given('the user logs in with credentials for a "male" account user "imrans" and pass "Mikloset@123"', null, { loginPage }); 
+      await And('the user is on "desktop" view', null, { dashboardPage }); 
+      await Then('the user opens and verifies edit option for all categories and change images', null, { dashboardPage }); 
+    });
+
+  });
+
+});
+
+// == technical section ==
+
+test.use({
+  $test: [({}, use) => use(test), { scope: 'test', box: true }],
+  $uri: [({}, use) => use('E2E/features/dashboardgender.feature'), { scope: 'test', box: true }],
+  $bddFileData: [({}, use) => use(bddFileData), { scope: "test", box: true }],
+});
+
+const bddFileData = [ // bdd-data-start
+  {"pwTestLine":10,"pickleLine":11,"tags":["@male","@error1"],"steps":[{"pwStepLine":7,"gherkinStepLine":8,"keywordType":"Context","textWithKeyword":"Given the user navigates to the Mikloset login page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":11,"gherkinStepLine":12,"keywordType":"Context","textWithKeyword":"Given the user logs in with credentials for a \"male\" account user \"imrans\" and pass \"Mikloset@123\"","stepMatchArguments":[{"group":{"start":40,"value":"\"male\"","children":[{"start":41,"value":"male","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":60,"value":"\"imrans\"","children":[{"start":61,"value":"imrans","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":78,"value":"\"Mikloset@123\"","children":[{"start":79,"value":"Mikloset@123","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":12,"gherkinStepLine":13,"keywordType":"Outcome","textWithKeyword":"Then the background image should match the \"male\" background","stepMatchArguments":[{"group":{"start":38,"value":"\"male\"","children":[{"start":39,"value":"male","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":13,"gherkinStepLine":14,"keywordType":"Outcome","textWithKeyword":"And the user should see the following categories and navigate correctly:","stepMatchArguments":[]},{"pwStepLine":14,"gherkinStepLine":27,"keywordType":"Outcome","textWithKeyword":"And check view all link for categories","stepMatchArguments":[]}]},
+  {"pwTestLine":17,"pickleLine":31,"tags":["@female"],"steps":[{"pwStepLine":7,"gherkinStepLine":8,"keywordType":"Context","textWithKeyword":"Given the user navigates to the Mikloset login page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":18,"gherkinStepLine":32,"keywordType":"Context","textWithKeyword":"Given the user logs in with credentials for a \"female\" account user \"tester500\" and pass \"Tester500!\"","stepMatchArguments":[{"group":{"start":40,"value":"\"female\"","children":[{"start":41,"value":"female","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":62,"value":"\"tester500\"","children":[{"start":63,"value":"tester500","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":83,"value":"\"Tester500!\"","children":[{"start":84,"value":"Tester500!","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":19,"gherkinStepLine":33,"keywordType":"Outcome","textWithKeyword":"Then the background image should match the \"female\" background","stepMatchArguments":[{"group":{"start":38,"value":"\"female\"","children":[{"start":39,"value":"female","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":20,"gherkinStepLine":34,"keywordType":"Outcome","textWithKeyword":"And the user should see the following categories and navigate correctly:","stepMatchArguments":[]},{"pwStepLine":21,"gherkinStepLine":51,"keywordType":"Outcome","textWithKeyword":"And check view all link for categories","stepMatchArguments":[]}]},
+  {"pwTestLine":24,"pickleLine":55,"tags":["@genderNeutral"],"steps":[{"pwStepLine":7,"gherkinStepLine":8,"keywordType":"Context","textWithKeyword":"Given the user navigates to the Mikloset login page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":25,"gherkinStepLine":56,"keywordType":"Context","textWithKeyword":"Given the user logs in with credentials for a \"gender neutral\" account user \"neu_qa\" and pass \"Mikloset@123\"","stepMatchArguments":[{"group":{"start":40,"value":"\"gender neutral\"","children":[{"start":41,"value":"gender neutral","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":70,"value":"\"neu_qa\"","children":[{"start":71,"value":"neu_qa","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":88,"value":"\"Mikloset@123\"","children":[{"start":89,"value":"Mikloset@123","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":26,"gherkinStepLine":57,"keywordType":"Outcome","textWithKeyword":"Then the background image should match the \"neutral\" background","stepMatchArguments":[{"group":{"start":38,"value":"\"neutral\"","children":[{"start":39,"value":"neutral","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":27,"gherkinStepLine":58,"keywordType":"Outcome","textWithKeyword":"And the user should see the following categories and navigate correctly:","stepMatchArguments":[]},{"pwStepLine":28,"gherkinStepLine":75,"keywordType":"Outcome","textWithKeyword":"And check view all link for categories","stepMatchArguments":[]}]},
+  {"pwTestLine":33,"pickleLine":88,"tags":["@editOption"],"steps":[{"pwStepLine":7,"gherkinStepLine":8,"keywordType":"Context","textWithKeyword":"Given the user navigates to the Mikloset login page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":34,"gherkinStepLine":81,"keywordType":"Context","textWithKeyword":"Given the user logs in with credentials for a \"male\" account user \"imrans\" and pass \"Mikloset@123\"","stepMatchArguments":[{"group":{"start":40,"value":"\"male\"","children":[{"start":41,"value":"male","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":60,"value":"\"imrans\"","children":[{"start":61,"value":"imrans","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":78,"value":"\"Mikloset@123\"","children":[{"start":79,"value":"Mikloset@123","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":35,"gherkinStepLine":82,"keywordType":"Context","textWithKeyword":"And the user is on \"desktop\" view","stepMatchArguments":[{"group":{"start":15,"value":"\"desktop\"","children":[{"start":16,"value":"desktop","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":36,"gherkinStepLine":83,"keywordType":"Outcome","textWithKeyword":"Then the user opens and verifies edit option for all categories and change images","stepMatchArguments":[]}]},
+]; // bdd-data-end

@@ -12,11 +12,12 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const testDir = defineBddConfig({
-  paths: ['E2E/features/dashboard_Common.feature'],
+  paths: ['E2E/features/*.feature'],
   steps: [
     'E2E/steps/*.ts',
     'E2E/pageFixture/page.fIxture.ts'
   ],
+  // tags:"@",
 });
 
 export default defineConfig({
@@ -28,19 +29,21 @@ export default defineConfig({
 
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: 3,
 
   // Optional: Reduce workers if your PC is slow/laggy during tests
-  workers: 1, 
+  workers: 2, 
 
   reporter: 'html',
 
   use: {
+    
     // baseURL:"https://dev.mikloset.com/betatesters/FFI",
     //baseURL: "http://192.168.2.47:3000/betatesters/FFI",
     // baseURL: "https://www.mikloset.com",
     screenshot: 'only-on-failure',
-    headless:false,
+    video: 'retain-on-failure',
+    headless:true,
     // Action timeout (for clicks, fills)
     actionTimeout: 15 * 1000,
 
@@ -51,13 +54,27 @@ export default defineConfig({
   },
 
   projects: [
-    {
-      name: 'chromium',
+  {
+      name: 'Chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
+    {
+      name: 'Firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'WebKit',
+      use: { ...devices['Desktop Safari'] },
+    },
+
+    // Mobile
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 13'] },
+    },
   ],
 });

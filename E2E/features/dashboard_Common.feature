@@ -9,14 +9,14 @@ Feature: Home Page - Common UI and Functional Sections
     Given the user should be in dashboard page in Mikloset 
 
   @positive @loggedIn 
-  Scenario: Verify the Home Page displays user profile and navigation sections
+  Scenario: [loggedIn] Verify the Home Page displays user profile and navigation sections
   # Given the user should be in dashboard page in Mikloset 
     Then the user should see the header sections "add items", "style me", "curate me", and "follow me"
     And the user should see the welcome message Welcome
     And the user should see follower details with "Followers", "Following", and "Follow Request"
 
-  @positive @loggedIn
-  Scenario: Verify 'Your Style Journey in 3 Steps' section is displayed correctly
+  @positive @loggedIn @error
+  Scenario: [loggedIn] Verify 'Your Style Journey in 3 Steps' section is displayed correctly
   # Given the user should be in dashboard page in Mikloset 
     Then the user should see the title Your Style Journey in 3 Steps
     And step 1 should display "Add Items" with description and a button "Add Items"
@@ -24,8 +24,8 @@ Feature: Home Page - Common UI and Functional Sections
     And step 3 should display "Share Your Looks" with description and a button "Share Your Looks"
 
   
-  @positive @loggedIn 
-    Scenario: Verify each "Add Items" menu option navigates correctly
+  @positive @loggedIn @error
+    Scenario:[loggedIn] Verify each "Add Items" menu option navigates correctly
     # Given the user should be in dashboard page in Mikloset 
     When step 1 should display "Add Items" with description and a button "Add Items"
     

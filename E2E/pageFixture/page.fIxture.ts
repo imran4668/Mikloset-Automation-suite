@@ -3,6 +3,7 @@ import SignupPage from '../pom/sinupPage';
 import HomePage from '../pom/homePage'; // Ensure this file exists
 import { LoginPage } from '../pom/loginPage';
 import DashboardPage from '../pom/dashboardPage';
+import { logResult, logScenario } from '../utils/logs';
 // import fs from 'fs';
 // import path from 'path';
 // import { fileURLToPath } from 'url'; // 1. Add this import
@@ -20,13 +21,19 @@ type Fixtures = {
 
 export const test = base.extend<Fixtures>({
   context: async ({ browser }, use, testInfo) => {
+    logScenario(testInfo);
     const useAuth = testInfo.tags.includes('@loggedIn');
-    const storageState = useAuth && fs.existsSync(authFile) ? authFile : undefined;
+    let context: any;
+    if (useAuth) {
+      context = await browser.newContext({
+        storageState: 'auth.json',
+      });
+    } else {
+      context = await browser.newContext();
+    }
 
-   const context = await browser.newContext({
-  storageState: 'auth.json',
-});
     await use(context);
+    logResult(testInfo);
     await context.close();
   },
 

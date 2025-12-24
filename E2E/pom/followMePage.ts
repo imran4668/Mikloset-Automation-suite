@@ -10,6 +10,7 @@ export class FollowMePage extends BasePage {
   readonly following: Locator;
   readonly followRequestLength: Locator;
   readonly followRequest: Locator;
+  //
 
   constructor(page: Page) {
     super(page);

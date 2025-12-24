@@ -28,7 +28,7 @@ export class LoginPage {
     async login(username: string, password: string) {
         // await this.page.pause();
         // .fill() has built-in waiting, but we can ensure visibility first
-        console.log("Filling in login detailsb strrat");
+        // console.log("Filling in login detailsb strrat");
         await this.waitUtils.waitForVisible(this.userNameOrEmail);
         console.log("Filling in login details");
         await this.userNameOrEmail.fill(username);

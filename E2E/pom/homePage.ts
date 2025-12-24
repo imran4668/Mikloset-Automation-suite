@@ -1,5 +1,6 @@
 import { Locator, Page ,expect} from "@playwright/test";
 import dotenv from 'dotenv';
+import { logScenario } from "../utils/logs";
 
 export default class HomePage {
     
@@ -15,6 +16,7 @@ export default class HomePage {
     }
   async goto(url: string = '') {
         try {
+            
             // Check if we are already on the dashboard to avoid reloading
             // Using a short timeout (e.g., 2s) so we don't wait too long if we aren't logged in
             await expect(this.page).toHaveURL(/dashboard/, { timeout: 2000 });

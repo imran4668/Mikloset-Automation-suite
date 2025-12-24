@@ -7,7 +7,7 @@ Feature: Home Page - Gender Based UI and Category Verification
   Background:
     Given the user navigates to the Mikloset login page
 
-  @male
+  @male @error1
   Scenario: Verify Home page for Male user
     Given the user logs in with credentials for a "male" account user "imrans" and pass "Mikloset@123"
     Then the background image should match the "male" background
@@ -76,7 +76,7 @@ Feature: Home Page - Gender Based UI and Category Verification
     # And the user should see the header sections "add your style", "style me", "curate me", and "follow me"
 
 
- @editOption @fail
+ @editOption 
   Scenario Outline: Verify Edit option for all categories across user types and devices 
     Given the user logs in with credentials for a "<gender>" account user "<username>" and pass "<password>"
     And the user is on "<device>" view

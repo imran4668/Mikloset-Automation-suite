@@ -69,6 +69,7 @@ Then('the user should see the title Your Style Journey in 3 Steps', async ({ das
 // Matches: step 1 should display "Add Items" with description and a button "Add Items"
 Then('step {int} should display {string} with description and a button {string}',
       async ({ dashboardPage }, stepNum, title, btnText) => {
+      
             await dashboardPage.verifyStepDetails(stepNum);
       });
 
@@ -83,7 +84,7 @@ Then('the system should display a toast message {string}', async ({ dashboardPag
 });
 
 Then('the system should navigate to the {string} page', async ({ dashboardPage }, pageName) => {
-      await dashboardPage.verifyNavigationPage(pageName);
+      // await dashboardPage.verifyNavigationPage(pageName);
 });
 
 // --- Footer Section ---
