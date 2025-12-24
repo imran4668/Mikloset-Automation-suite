@@ -1,6 +1,7 @@
 import { BrowserContext, Locator, Page, expect } from '@playwright/test';
 import WaitUtils from '../utils/support';
 import { LoginPage } from './loginPage';
+import data from "../testData/testdata.json"
 import { logScenario } from '../utils/logs';
 
 
@@ -176,7 +177,7 @@ export default class DashboardPage {
       throw new Error(`Unknown gender: ${gender}`);
     }
   }
-  async dashboardPage() {
+  async dashboardPage(number?: number) {
     // await this.page.pause();
  
     try {
@@ -198,8 +199,11 @@ export default class DashboardPage {
       const loginPage = new LoginPage(this.page);
 
       // Use environment variables for credentials
-      const username = process.env.BASE_URL === "https://www.mikloset.com" ? "imran" : "ranganianil20";
-      const password = process.env.LOGIN_PASSWORD || "Mikloset@123";
+            const idx = number ?? 0;
+            const username = process.env.BASE_URL === "https://www.mikloset.com" ? 
+                              data.prod[idx].username : data.Dev[idx].username;
+            const password = process.env.BASE_URL === "https://www.mikloset.com" ? 
+                              data.prod[idx].password : data.Dev[idx].password;
 
       await loginPage.login(username, password);
       await this.waitUtils.waitForURLContains("/dashboard");

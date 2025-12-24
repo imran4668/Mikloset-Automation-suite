@@ -1,9 +1,11 @@
-import { createBdd } from 'playwright-bdd';
-const { Given, When, Then } = createBdd();
+import { Given, Then, When } from "../pageFixture/page.fIxture";
 
 
-Given('user logs in with sender account', async ({page}) => {
+
+Given('user logs in with sender account', async ({dashboardPage}) => {
+    dashboardPage.dashboardPage(1);
  console.log("logged in with sender account");
+
 });
 
 Given('user navigates to Follow Me page', async ({}) => {

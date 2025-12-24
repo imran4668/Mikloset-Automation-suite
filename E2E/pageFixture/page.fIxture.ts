@@ -4,6 +4,7 @@ import HomePage from '../pom/homePage'; // Ensure this file exists
 import { LoginPage } from '../pom/loginPage';
 import DashboardPage from '../pom/dashboardPage';
 import { logResult, logScenario } from '../utils/logs';
+import FollowMePage from '../pom/followMePage';
 // import fs from 'fs';
 // import path from 'path';
 // import { fileURLToPath } from 'url'; // 1. Add this import
@@ -17,6 +18,7 @@ type Fixtures = {
   homePage: HomePage;
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
+  FollowMePage: FollowMePage;
 };
 
 export const test = base.extend<Fixtures>({
@@ -57,6 +59,9 @@ export const test = base.extend<Fixtures>({
 
   dashboardPage: async ({ page }, use) => {
     await use(new DashboardPage(page));
+  },
+  FollowMePage: async ({ page }, use) => {
+    await use(new FollowMePage(page));
   },
 });
 

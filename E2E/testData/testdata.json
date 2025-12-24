@@ -1,0 +1,27 @@
+{
+    "prod":
+        [{
+            "username":"imran",
+            "password":"Mikloset@123",
+            "gender":"male"
+        },
+         {
+            "username":"Anilkumar",
+            "password":"Mikloset@123",
+            "gender":"Genral Neutral"
+        }]
+    ,
+    "Dev":[
+        {
+            "username":"imrans",
+            "password":"Mikloset@123",
+            "gender":"male"
+        },
+       {
+            "username":"ranganianil20",
+            "password":"Mikloset@123",
+            "gender":"Genral Neutral"
+        }
+    ]
+    
+}
