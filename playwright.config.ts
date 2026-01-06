@@ -4,9 +4,6 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import dotenv from 'dotenv';
 
-// 1. FIXED: Define __dirname for ES Modules (Fixes ReferenceError)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // 2. Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '.env') });

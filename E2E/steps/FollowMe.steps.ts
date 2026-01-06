@@ -8,11 +8,21 @@ Given('user logs in with sender account', async ({dashboardPage}) => {
 
 });
 
-Given('user navigates to Follow Me page', async ({}) => {
+Given('user navigates to Follow Me page', async ({FollowMePage}) => {
+ FollowMePage.navigateToFollowMePage();
+ console.log("navigated to Follow Me page");
+});
+
+Given('user clicks on Find Creators tab', async ({FollowMePage}) => {
+FollowMePage.clickOnFindCreatorsTab();
+console.log("clicked on Find Creators tab");
 
 });
 
+
 When('user searches for a user', async ({}) => {
+    
+
 
 });
 

@@ -1,7 +1,7 @@
 import { BrowserContext, Locator, Page, expect } from '@playwright/test';
 import WaitUtils from '../utils/support';
 import { LoginPage } from './loginPage';
-import data from "../testData/testdata.json"
+import data from "../testData/testdata.json" 
 import { logScenario } from '../utils/logs';
 
 

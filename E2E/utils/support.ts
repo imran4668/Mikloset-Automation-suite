@@ -49,4 +49,10 @@ export default class WaitUtils {
   async waitForURLContains(partial: string, timeout = 5000) {
     await this.page.waitForURL(`**${partial}`, { timeout });
   }
+  async fill(locator: Locator, text: string, timeout = 5000) {
+    await this.waitForClickable(locator, timeout);
+    await locator.fill(text);
+    await this.waitForLoader();
+  }
+  
 }

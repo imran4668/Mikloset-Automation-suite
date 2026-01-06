@@ -3,6 +3,7 @@ Feature: Follow Me Page Validation with Mailinator End to End Flow
 Scenario: Send follow request and validate via Mailinator and application
   Given user logs in with sender account
   And user navigates to Follow Me page
+  And user clicks on Find Creators tab
   When user searches for a user
   And user sends follow request
   Then follow request should be sent successfully

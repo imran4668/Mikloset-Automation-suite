@@ -17,6 +17,10 @@ export default class FollowMePage {
   //followme page 
   readonly followMePage: Locator ;
 
+  readonly findCreatorsTab: Locator ;
+  readonly followMeSearchBox: Locator ;
+  readonly followReq: Locator ;
+
 
   
     constructor(page: Page) {
@@ -32,11 +36,21 @@ export default class FollowMePage {
     this.followRequest = page.getByTestId('follow_request_text');
     //followme page
     this.followMePage = page.getByTestId('followMe_name');
+    this.findCreatorsTab = page.getByTestId('find_creators');
+    this.followMeSearchBox = page.getByPlaceholder('Search...');
+    this.followReq = page.locator("//button[@data-testid='loader_button' and text()='Follow']").first();
 
   }
 
   async navigateToFollowMePage() {
-    await this.wait.click
+    await this.wait.click(this.followMePage);
+  }
+  async clickOnFindCreatorsTab() {
+    await this.wait.click(this.findCreatorsTab);
+  }
+  async searchUser(userName: string) {
+    await this.wait.fill(this.followMeSearchBox, userName);
+    await this.followReq.click();
   }
 
   
