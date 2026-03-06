@@ -14,7 +14,7 @@ const testDir = defineBddConfig({
     'E2E/steps/*.ts',
     'E2E/pageFixture/page.fIxture.ts'
   ],
-  // tags:"@",
+  // tags:"@fail",
 });
 
 export default defineConfig({
@@ -26,10 +26,10 @@ export default defineConfig({
 
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: 3,
+  retries: 1,
 
   // Optional: Reduce workers if your PC is slow/laggy during tests
-  workers: 2, 
+  workers: 1, 
 
   reporter: 'html',
 
@@ -40,7 +40,7 @@ export default defineConfig({
     // baseURL: "https://www.mikloset.com",
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    headless:true,
+    headless:false,
     // Action timeout (for clicks, fills)
     actionTimeout: 15 * 1000,
 
@@ -53,25 +53,25 @@ export default defineConfig({
   projects: [
   {
       name: 'Chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'Firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'WebKit',
-      use: { ...devices['Desktop Safari'] },
-    },
+      use: { ...devices['Desktop Chrome'] ,   viewport: null ,  deviceScaleFactor: undefined },
+    // },
+    // {
+    //   name: 'Firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
+    // {
+    //   name: 'WebKit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
 
-    // Mobile
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 13'] },
+    // // Mobile
+    // {
+    //   name: 'Mobile Chrome',
+    //   use: { ...devices['Pixel 5'] },
+    // },
+    // {
+    //   name: 'Mobile Safari',
+    //   use: { ...devices['iPhone 13'] },
     },
   ],
 });

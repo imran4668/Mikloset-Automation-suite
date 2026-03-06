@@ -1,48 +1,59 @@
-import { Locator, Page ,expect} from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 import dotenv from 'dotenv';
 import { logScenario } from "../utils/logs";
+import WaitUtils from "../utils/support";
 
 export default class HomePage {
-    
-    readonly page:Page;
-    readonly signinLink:Locator;
-    
 
-    constructor(page:Page) {
+    readonly page: Page;
+    readonly signinLink: Locator;
+    readonly waitUtils: WaitUtils;
+
+
+    constructor(page: Page) {
         // dotenv.config();
         this.page = page;
-        this.signinLink=page.locator('//*[@id="root"]/div[1]/div/div/div');
-       
+        this.signinLink = page.locator('//*[@id="root"]/div[1]/div/div/div');
+        this.waitUtils = new WaitUtils(page);
+
+
     }
-  async goto(url: string = '') {
-        try {
-            
-            // Check if we are already on the dashboard to avoid reloading
-            // Using a short timeout (e.g., 2s) so we don't wait too long if we aren't logged in
-            await expect(this.page).toHaveURL(/dashboard/, { timeout: 2000 });
-            console.log("Already on dashboard, skipping navigation.");
-        } catch (err) {
-            // If not on dashboard, navigate to the requested URL
-            console.log(`Navigating to: ${process.env.BASE_URL}${url}`);
-            
-            await this.page.goto(`${process.env.BASE_URL}${url}`, {
-                timeout: 60000,             // Increase timeout to 60 seconds
-                waitUntil: 'domcontentloaded' // Wait only for DOM to be ready, not full network idle
-            });
+    //   async goto(url: string = '') {
+    //   console.log(`Navigating to: ${process.env.BASE_URL}${url}`);
+
+    //   await this.page.goto(`${process.env.BASE_URL}${url}`, {
+    //     timeout: 90000, // dev env can be slow
+    //     waitUntil: 'load'
+    //   });
+
+    //   await this.page.waitForLoadState('networkidle');
+    // }
+    async goto(url: string = '') {
+        console.log(`Navigating to: ${process.env.BASE_URL}${url}`);
+
+        await this.page.goto(`${process.env.BASE_URL}${url}`, {
+            timeout: 90000
+        });
+
+        // Ensure redirect completed (if any)
+        if (url) {
+            await this.waitUtils.waitForURLContains(url);
         }
+
+        // Wait for UI loader to disappear
+        await this.waitUtils.waitForLoader();
     }
-        
-    
 
-    
 
-    async navigateToLoginPage(){
+
+
+    async navigateToLoginPage() {
         await this.page.waitForLoadState('networkidle');
         await this.signinLink.click();
         await this.page.waitForLoadState('networkidle');
-        
-    }
-    
 
-  
+    }
+
+
+
 }

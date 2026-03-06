@@ -90,7 +90,9 @@ Then('the system should navigate to the {string} page', async ({ dashboardPage }
 // --- Footer Section ---
 
 Then('the user should see the footer links:', async ({ dashboardPage }, dataTable) => {
+      // await dashboardPage.page.pause();
       const links = dataTable.rows().flat();
+      console.log("Footer links to verify:", links);
       await dashboardPage.verifyFooterLinks(links);
 });
 

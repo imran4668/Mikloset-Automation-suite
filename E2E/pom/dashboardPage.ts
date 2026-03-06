@@ -25,7 +25,8 @@ export default class DashboardPage {
   readonly termsAndCondition: Locator;
   readonly dontSellMyInfo: Locator;
   readonly limitUseOfpersonalInfo: Locator;
-  readonly copyrightText: Locator;
+  // readonly copyrightText: Locator;
+  readonly copyright:Locator;
 
   // Header sections
   readonly homeHeader: Locator;
@@ -84,6 +85,9 @@ export default class DashboardPage {
   readonly editPopupOption: Locator;
   readonly saveChangeImage: Locator;
 
+  // support
+  readonly dont_sell: Locator;
+
   constructor(page: Page) {
     
     this.page = page;
@@ -101,8 +105,8 @@ export default class DashboardPage {
     this.termsAndCondition = page.getByTestId("terms_and_conditions_link");
     this.dontSellMyInfo = page.getByTestId("my_info_link");
     this.limitUseOfpersonalInfo = page.getByTestId("limit_personal_info_link");
-    this.copyrightText = page.getByText("©2025 FashionForwardInnovations, LLC. All rights reserved.");
-
+    this.copyright=page.getByTestId("copy_right_text");
+    
     // Header
     this.homeHeader = page.getByTestId("home_name");
     this.addYourItemsHeader = page.getByTestId("addYourStyle_name");
@@ -159,6 +163,8 @@ export default class DashboardPage {
     this.hoverAccessoriesCategory = page.getByTestId("Accessories_category_name_details");
     this.editPopupOption = page.getByTestId("dashboard_edit_category_pop_up");
     this.saveChangeImage = page.getByTestId("dashboard_edit_category_pop_up_save_button");
+    // support 
+    this.dont_sell= this.page.locator("//h1[text()='Data Subject Access Request Form']");
   }
 
   // --- Actions & Verifications ---
@@ -178,41 +184,38 @@ export default class DashboardPage {
     }
   }
   async dashboardPage(number?: number) {
-    // await this.page.pause();
- 
-    try {
-      
-      await this.page.goto(`${process.env.BASE_URL}/dashboard`);
 
-      // Wait until dashboard URL is reached
-      const url = await this.waitUtils.waitForURLContains("/dashboard");
-      console.log("Dashboard URL verified:");
-      
+  await this.page.goto(`${process.env.BASE_URL}/dashboard`);
 
-    } catch (err) {
-      console.error("Error navigating to dashboard:");
+  // Wait for page to settle
+  await this.page.waitForLoadState('domcontentloaded');
 
-      // Retry navigation
-      await this.page.goto(`${process.env.BASE_URL}/signin`);
+  // If redirected to signin → login
+  if (this.page.url().includes("/signin")) {
 
-      // Create login page object
-      const loginPage = new LoginPage(this.page);
+    console.log("Not logged in. Performing login...");
 
-      // Use environment variables for credentials
-            const idx = number ?? 0;
-            const username = process.env.BASE_URL === "https://www.mikloset.com" ? 
-                              data.prod[idx].username : data.Dev[idx].username;
-            const password = process.env.BASE_URL === "https://www.mikloset.com" ? 
-                              data.prod[idx].password : data.Dev[idx].password;
+    const loginPage = new LoginPage(this.page);
 
-      await loginPage.login(username, password);
-      await this.waitUtils.waitForURLContains("/dashboard");
-      console.log("Logged in and navigated to dashboard successfully.");
-      // Save storage state via the Page's BrowserContext
-      await this.context.storageState({ path: 'auth.json' });
+    const idx = number ?? 0;
+    const username = process.env.BASE_URL === "https://www.mikloset.com"
+      ? data.prod[idx].username
+      : data.Dev[idx].username;
 
-    }
+    const password = process.env.BASE_URL === "https://www.mikloset.com"
+      ? data.prod[idx].password
+      : data.Dev[idx].password;
+
+    await loginPage.login(username, password);
+
+    await this.waitUtils.waitForURLContains("/dashboard");
   }
+
+  // Final dashboard verification
+  await expect(this.backgroundImage).toBeVisible({ timeout: 10000 });
+
+  console.log("Dashboard ready.");
+}
  
 
   async verifyCategories(expectedCategories: string[]) {
@@ -235,11 +238,13 @@ export default class DashboardPage {
   }
 
   async verifyFooterLinks(footerItems: string[] | string) {
+    console.log("Footer items to verify:", footerItems , typeof footerItems);
+    
     // Handle the single string case for Copyright check
     if (typeof footerItems === 'string') {
-      if (footerItems.includes("All rights reserved")) {
-        await this.waitUtils.waitForVisible(this.copyrightText);
-      }
+
+        await this.waitUtils.waitForVisible(this.copyright);
+      
       return;
     }
 
@@ -269,21 +274,27 @@ export default class DashboardPage {
           await this.page.goBack();
           break;
         case "Terms & Conditions":
-          await this.waitUtils.waitForVisible(this.termsAndCondition);
+          await this.waitUtils.click(this.termsAndCondition);
+          await this.waitUtils.waitForURLContains("terms_and_conditions");
+          await this.page.goBack();
           break;
         case "Don't Sell/Share My Info (California Only)":
-          // External links might behave differently, ensure we wait for visible first
-          await this.waitUtils.waitForVisible(this.dontSellMyInfo);
-          // Note: Testing external redirects (termly.io) can be flaky if they block bots
+          // const dont_sell= this.page.locator("//h1[text()='Data Subject Access Request Form']");
+          await this.waitUtils.click(this.dontSellMyInfo);
+          await this.waitUtils.waitForVisible(this.dont_sell);
+          await this.page.goBack();
           break;
         case "Limit use of personal information (California Only)":
-          await this.waitUtils.waitForVisible(this.limitUseOfpersonalInfo);
+          //  dont_sell= this.page.locator("//h1[text()='Data Subject Access Request Form']");
+          await this.waitUtils.click(this.limitUseOfpersonalInfo);
+          await this.waitUtils.waitForVisible(this.dont_sell);
+          await this.page.goBack();
           break;
         default:
           throw new Error(`Unknown footer link: ${linkName}`);
       }
-      // Ensure we are back on dashboard before next loop
-      await this.page.bringToFront();
+      // // Ensure we are back on dashboard before next loop
+      // await this.page.bringToFront();
     }
   }
 

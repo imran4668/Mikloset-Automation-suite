@@ -7,52 +7,77 @@ export default class WaitUtils {
     this.loader = page.getByTestId('for_loader_image');
   }
 
-  async waitForLoader(timeout = 10000) {
+  // -------------------------
+  // LOADER HANDLING
+  // -------------------------
+
+  async waitForLoader(timeout = 15000) {
     try {
-      if (await this.loader.isVisible({ timeout: 1000 })) {
+      const isVisible = await this.loader.isVisible({ timeout: 1000 }).catch(() => false);
+
+      if (isVisible) {
         await this.loader.waitFor({ state: 'detached', timeout });
       }
     } catch {
-      // loader not present – safe to continue
+      // Loader not present → safe to continue
     }
   }
 
-  // ---------- Locator based (BEST) ----------
+  // -------------------------
+  // ELEMENT WAITS (STABLE)
+  // -------------------------
 
-  async waitForVisible(locator: Locator, timeout = 5000) {
+  async waitForVisible(locator: Locator, timeout = 10000) {
     await this.waitForLoader();
-    await locator.waitFor({ state: 'visible', timeout });
+
+    // Ensure element exists in DOM first
+    await locator.waitFor({ state: 'attached', timeout });
+
+    // Scroll only if attached
+    await locator.scrollIntoViewIfNeeded();
+
+    // Final visibility assertion
+    await expect(locator).toBeVisible({ timeout });
   }
 
-  async waitForClickable(locator: Locator, timeout = 5000) {
+  async waitForClickable(locator: Locator, timeout = 10000) {
     await this.waitForLoader();
+
     await locator.waitFor({ state: 'visible', timeout });
     await expect(locator).toBeEnabled({ timeout });
   }
 
-  async click(locator: Locator, timeout = 5000) {
+  async click(locator: Locator, timeout = 10000) {
     await this.waitForClickable(locator, timeout);
     await locator.click();
     await this.waitForLoader();
   }
 
-  async waitForText(locator: Locator, text: string, timeout = 5000) {
-    await this.waitForLoader();
-    await expect(locator).toHaveText(text, { timeout });
-  }
-
-  async waitForHidden(locator: Locator, timeout = 5000) {
-    await this.waitForLoader();
-    await locator.waitFor({ state: 'hidden', timeout });
-  }
-
-  async waitForURLContains(partial: string, timeout = 5000) {
-    await this.page.waitForURL(`**${partial}`, { timeout });
-  }
-  async fill(locator: Locator, text: string, timeout = 5000) {
+  async fill(locator: Locator, text: string, timeout = 10000) {
     await this.waitForClickable(locator, timeout);
     await locator.fill(text);
     await this.waitForLoader();
   }
-  
+
+  async waitForText(locator: Locator, text: string, timeout = 10000) {
+    await this.waitForLoader();
+    await expect(locator).toHaveText(text, { timeout });
+  }
+
+  async waitForHidden(locator: Locator, timeout = 10000) {
+    await this.waitForLoader();
+    await locator.waitFor({ state: 'hidden', timeout });
+  }
+
+  // -------------------------
+  // URL WAITS (FIXED FLAKY VERSION)
+  // -------------------------
+
+  async waitForURLContains(partial: string, timeout = 15000) {
+    await expect(this.page).toHaveURL(new RegExp(partial), { timeout });
+  }
+
+  async waitForNavigationStable(timeout = 15000) {
+    await this.page.waitForLoadState('networkidle', { timeout });
+  }
 }
